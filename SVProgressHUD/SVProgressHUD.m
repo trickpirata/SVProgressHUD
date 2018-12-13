@@ -531,9 +531,11 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     UIMotionEffectGroup *effectGroup = [UIMotionEffectGroup new];
     effectGroup.motionEffects = @[effectX, effectY];
     
-    // Clear old motion effect, then add new motion effects
-    self.hudView.motionEffects = @[];
-    [self.hudView addMotionEffect:effectGroup];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Clear old motion effect, then add new motion effects
+        self.hudView.motionEffects = @[];
+        [self.hudView addMotionEffect:effectGroup];
+    });
 }
 
 - (void)updateViewHierarchy {
