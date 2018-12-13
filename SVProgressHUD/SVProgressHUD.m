@@ -521,21 +521,23 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 - (void)updateMotionEffectForXMotionEffectType:(UIInterpolatingMotionEffectType)xMotionEffectType yMotionEffectType:(UIInterpolatingMotionEffectType)yMotionEffectType {
     
+    UIInterpolatingMotionEffect *effectX = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:xMotionEffectType];
+    effectX.minimumRelativeValue = @(-SVProgressHUDParallaxDepthPoints);
+    effectX.maximumRelativeValue = @(SVProgressHUDParallaxDepthPoints);
+    
+    UIInterpolatingMotionEffect *effectY = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y" type:yMotionEffectType];
+    effectY.minimumRelativeValue = @(-SVProgressHUDParallaxDepthPoints);
+    effectY.maximumRelativeValue = @(SVProgressHUDParallaxDepthPoints);
+    
+    UIMotionEffectGroup *effectGroup = [UIMotionEffectGroup new];
+    effectGroup.motionEffects = @[effectX, effectY];
+    
+    __weak SVProgressHUD *weakSelf = self;
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        UIInterpolatingMotionEffect *effectX = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:xMotionEffectType];
-        effectX.minimumRelativeValue = @(-SVProgressHUDParallaxDepthPoints);
-        effectX.maximumRelativeValue = @(SVProgressHUDParallaxDepthPoints);
-        
-        UIInterpolatingMotionEffect *effectY = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y" type:yMotionEffectType];
-        effectY.minimumRelativeValue = @(-SVProgressHUDParallaxDepthPoints);
-        effectY.maximumRelativeValue = @(SVProgressHUDParallaxDepthPoints);
-        
-        UIMotionEffectGroup *effectGroup = [UIMotionEffectGroup new];
-        effectGroup.motionEffects = @[effectX, effectY];
-        
+        __strong SVProgressHUD *strongSelf = weakSelf;
         // Clear old motion effect, then add new motion effects
-        self.hudView.motionEffects = @[];
-        [self.hudView addMotionEffect:effectGroup];
+        strongSelf.hudView.motionEffects = @[];
+        [strongSelf.hudView addMotionEffect:effectGroup];
     }];
 }
 
